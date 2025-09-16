@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useCallback } from 'react';
 import type {
   City,
@@ -8,31 +10,36 @@ import type {
   AuthMode,
   AIAutofillData,
   Review,
-} from './types';
-import { api } from './services/api';
-import { Header } from './components/Header';
-import { FeaturedCarousel } from './components/FeaturedCarousel';
-import { DiscoveryBar } from './components/DiscoveryBar';
-import { EventGrid } from './components/EventGrid';
-import { SearchBar } from './components/SearchBar';
-import { EventDetailModal } from './components/EventDetailModal';
-import { CreateEventModal } from './components/CreateEventModal';
-import { AuthModal } from './components/AuthModal';
-import { AIAssistantModal } from './components/AIAssistantModal';
-import { EmailVerificationNotice } from './components/EmailVerificationNotice';
-import { UserProfileModal } from './components/UserProfileModal';
-import { Pagination } from './components/Pagination';
-import { loggingService } from './services/loggingService';
+} from '@/lib/types';
+import { api } from '@/lib/api';
+import { Header } from './Header';
+import { FeaturedCarousel } from './FeaturedCarousel';
+import { DiscoveryBar } from './DiscoveryBar';
+import { EventGrid } from './EventGrid';
+import { SearchBar } from './SearchBar';
+import { EventDetailModal } from './EventDetailModal';
+import { CreateEventModal } from './CreateEventModal';
+import { AuthModal } from './AuthModal';
+import { AIAssistantModal } from './AIAssistantModal';
+import { EmailVerificationNotice } from './EmailVerificationNotice';
+import { UserProfileModal } from './UserProfileModal';
+import { Pagination } from './Pagination';
+import { loggingService } from '@/lib/loggingService';
 
 const EVENTS_PER_PAGE = 8;
 
-const App: React.FC = () => {
-  // Data state
-  const [events, setEvents] = useState<Event[]>([]);
-  const [cities, setCities] = useState<City[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+interface EventaraClientProps {
+  initialEvents: Event[];
+  initialCities: City[];
+  initialCategories: Category[];
+}
 
+const EventaraClient: React.FC<EventaraClientProps> = ({ initialEvents, initialCities, initialCategories }) => {
+  // Data state
+  const [events, setEvents] = useState<Event[]>(initialEvents);
+  const [cities] = useState<City[]>(initialCities);
+  const [categories] = useState<Category[]>(initialCategories);
+  
   // UI State
   const [lang, setLang] = useState<Language>('en');
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -74,27 +81,6 @@ const App: React.FC = () => {
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' || lang === 'ku' ? 'rtl' : 'ltr';
   }, [lang]);
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        const [eventsData, citiesData, categoriesData] = await Promise.all([
-          api.getEvents(),
-          api.getCities(),
-          api.getCategories(),
-        ]);
-        setEvents(eventsData);
-        setCities(citiesData);
-        setCategories(categoriesData);
-      } catch (error) {
-        loggingService.logError(error as Error, { context: 'loadInitialData' });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadData();
-  }, []);
   
   const handleAuthClick = (mode: AuthMode) => {
     setAuthMode(mode);
@@ -217,10 +203,10 @@ const App: React.FC = () => {
     const matchesQuery = query === '' ||
       event.title.en.toLowerCase().includes(query) ||
       event.title.ar.toLowerCase().includes(query) ||
-      event.title.ku.toLowerCase().includes(query) ||
+      (event.title.ku && event.title.ku.toLowerCase().includes(query)) ||
       event.description.en.toLowerCase().includes(query) ||
       event.description.ar.toLowerCase().includes(query) ||
-      event.description.ku.toLowerCase().includes(query);
+      (event.description.ku && event.description.ku.toLowerCase().includes(query));
 
     const matchesMonth = filters.month === '' || new Date(event.date).getMonth() === parseInt(filters.month, 10);
     const matchesCategory = !filters.category || event.categoryId === filters.category;
@@ -353,4 +339,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default EventaraClient;

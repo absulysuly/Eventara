@@ -1,8 +1,8 @@
-import type { City, Category, Event, User, Review } from '../types';
-import { CITIES, CATEGORIES, EVENTS as initialEvents, USERS as initialUsers } from '../data/mockData';
+import type { City, Category, Event, User, Review } from './types';
+import { CITIES, CATEGORIES, EVENTS as initialEvents, USERS as initialUsers } from './data';
 import { loggingService } from './loggingService';
 
-// Simulate a database
+// Simulate a database in memory
 let events: Event[] = JSON.parse(JSON.stringify(initialEvents));
 let users: User[] = JSON.parse(JSON.stringify(initialUsers));
 
@@ -10,17 +10,15 @@ const simulateDelay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
 export const api = {
   getCities: async (): Promise<City[]> => {
-    await simulateDelay(100);
+    // In a real app, this would be a fetch call
     return CITIES;
   },
 
   getCategories: async (): Promise<Category[]> => {
-    await simulateDelay(100);
     return CATEGORIES;
   },
 
   getEvents: async (): Promise<Event[]> => {
-    await simulateDelay(500);
     return events.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   },
   

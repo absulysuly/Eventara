@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import type { City, Category, AIAutofillData, AISuggestionResponse } from '../types';
-import { generateEventDetailsFromPrompt } from '../services/geminiService';
-import { loggingService } from '../services/loggingService';
+import type { City, Category, AIAutofillData, AISuggestionResponse } from '@/lib/types';
+import { generateEventDetailsFromPrompt } from '@/lib/services/geminiService';
+import { loggingService } from '@/lib/loggingService';
 
 interface AIAssistantModalProps {
   isOpen: boolean;
@@ -37,17 +37,15 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({ isOpen, onCl
     if (file) {
       setError(null); // Clear previous validation errors
 
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         setError('Please upload a valid image file (PNG, JPG, etc.).');
-        if (fileInputRef.current) fileInputRef.current.value = ''; // Reset the input
+        if (fileInputRef.current) fileInputRef.current.value = '';
         return;
       }
 
-      // Validate file size
       if (file.size > MAX_FILE_SIZE_BYTES) {
         setError(`File size cannot exceed ${MAX_FILE_SIZE_MB}MB.`);
-        if (fileInputRef.current) fileInputRef.current.value = ''; // Reset the input
+        if (fileInputRef.current) fileInputRef.current.value = '';
         return;
       }
       
@@ -68,12 +66,13 @@ export const AIAssistantModal: React.FC<AIAssistantModalProps> = ({ isOpen, onCl
     setIsLoading(true);
     setSuggestions(null);
     try {
+      // Correctly call the secure service
       const result = await generateEventDetailsFromPrompt(prompt, cities, categories, selectedImage);
       setSuggestions(result);
     } catch (e) {
       const err = e as Error;
       loggingService.logError(err, { context: 'AIAssistantModal.handleGetSuggestions' });
-      setError("Sorry, we couldn't get AI suggestions right now. Please try again.");
+      setError(err.message || "Sorry, we couldn't get AI suggestions right now. Please try again.");
     } finally {
       setIsLoading(false);
     }

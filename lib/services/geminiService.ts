@@ -1,5 +1,5 @@
-import type { City, Category, AISuggestionResponse } from '../lib/types';
-import { loggingService } from '../lib/loggingService';
+import type { City, Category, AISuggestionResponse } from '@/lib/types';
+import { loggingService } from '@/lib/loggingService';
 
 const MAX_RETRIES = 2; // Total attempts = 1 initial + 2 retries = 3
 const RETRY_DELAY_MS = 1000;
@@ -69,7 +69,7 @@ export const generateEventDetailsFromPrompt = async (
         throw new Error("Failed to get AI suggestions after multiple attempts. Please check your connection and try again.");
       }
 
-      // Wait before the next retry
+      // Wait before the next retry with exponential backoff
       await new Promise(res => setTimeout(res, RETRY_DELAY_MS * Math.pow(2, attempt)));
     }
   }

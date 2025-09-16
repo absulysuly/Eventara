@@ -40,7 +40,7 @@ export const DiscoveryBar: React.FC<DiscoveryBarProps> = ({ cities, categories, 
   };
 
   return (
-    <div className="py-4 bg-neutral">
+    <div className="py-4 bg-neutral border-b border-neutral-border">
       {/* Cities Section */}
       <section className="mb-4">
         <h3 className="font-bold text-lg text-neutral-text px-4 mb-2">{t.cities[lang]}</h3>
@@ -64,27 +64,23 @@ export const DiscoveryBar: React.FC<DiscoveryBarProps> = ({ cities, categories, 
       {/* Categories Section */}
       <section>
         <h3 className="font-bold text-lg text-neutral-text px-4 mb-2">{t.categories[lang]}</h3>
-        <div className="flex overflow-x-auto pb-2 scrollbar-hide gap-1 px-4">
-            {categories.map((cat) => (
-              <CategoryButton
-                key={cat.id}
-                category={cat}
-                onClick={() => onFilterChange('category', cat.id === 'all' ? '' : cat.id)}
-                isActive={activeFilters.category === cat.id || (cat.id === 'all' && !activeFilters.category)}
-                lang={lang}
-              />
-            ))}
+        <div className="relative flex overflow-x-hidden group">
+            <div className="py-2 flex animate-marquee-reverse group-hover:[animation-play-state:paused] whitespace-nowrap">
+                {[...categories, ...categories].map((cat, index) => (
+                    <div className="mx-1.5" key={`${cat.id}-${index}`}>
+                        <CategoryButton
+                            key={cat.id}
+                            category={cat}
+                            onClick={() => onFilterChange('category', cat.id === 'all' ? '' : cat.id)}
+                            isActive={activeFilters.category === cat.id || (cat.id === 'all' && !activeFilters.category)}
+                            lang={lang}
+                        />
+                    </div>
+                ))}
+            </div>
+            <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-neutral via-transparent to-neutral"></div>
         </div>
       </section>
-       <style>{`
-          .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-          }
-          .scrollbar-hide {
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
-          }
-      `}</style>
     </div>
   );
 };
