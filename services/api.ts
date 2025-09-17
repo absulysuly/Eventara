@@ -114,16 +114,5 @@ export const api = {
       loggingService.trackEvent('user_verified', { userId: user.id });
       const { password: _, ...userWithoutPassword } = user;
       return userWithoutPassword;
-  },
-
-  forgotPassword: async (email: string): Promise<{ message: string }> => {
-    await simulateDelay(600);
-    const userExists = users.some(u => u.email === email);
-    // For security, we don't reveal if the user exists or not.
-    // The AuthModal will show a generic success message either way.
-    if (userExists) {
-      loggingService.trackEvent('password_reset_request', { email });
-    }
-    return { message: 'If an account with this email exists, a reset link has been sent.' };
-  },
+  }
 };

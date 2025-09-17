@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+// FIX: Removed unused onLoginAttempt prop from EmailVerificationNoticeProps to resolve a TypeScript type mismatch in App.tsx.
 interface EmailVerificationNoticeProps {
   email: string;
   onSimulateVerification: (email: string) => Promise<void>;

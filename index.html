@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -25,16 +24,11 @@
             },
             animation: {
               marquee: 'marquee 60s linear infinite',
-              'marquee-reverse': 'marquee-reverse 60s linear infinite',
             },
             keyframes: {
               marquee: {
                 '0%': { transform: 'translateX(0%)' },
                 '100%': { transform: 'translateX(-50%)' },
-              },
-              'marquee-reverse': {
-                '0%': { transform: 'translateX(-50%)' },
-                '100%': { transform: 'translateX(0%)' },
               },
             },
           }
@@ -53,19 +47,10 @@
   <script type="importmap">
 {
   "imports": {
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.19.0",
     "react/": "https://aistudiocdn.com/react@^19.1.1/",
     "react": "https://aistudiocdn.com/react@^19.1.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.19.0",
-    "@vercel/node": "https://aistudiocdn.com/@vercel/node@^5.3.22",
-    "tailwindcss": "https://aistudiocdn.com/tailwindcss@^4.1.13",
-    "next/": "https://aistudiocdn.com/next@^15.5.3/",
-    "next": "https://aistudiocdn.com/next@^15.5.3",
-    "zod": "https://aistudiocdn.com/zod@^4.1.8",
-    "@ai-sdk/google": "https://aistudiocdn.com/@ai-sdk/google@^2.0.14",
-    "ai": "https://aistudiocdn.com/ai@^5.0.44",
-    "@vercel/kv": "https://aistudiocdn.com/@vercel/kv@^3.0.0",
-    "@upstash/ratelimit": "https://aistudiocdn.com/@upstash/ratelimit@^2.0.6"
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.1.1/"
   }
 }
 </script>

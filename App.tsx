@@ -21,10 +21,7 @@ import { AuthModal } from './components/AuthModal';
 import { AIAssistantModal } from './components/AIAssistantModal';
 import { EmailVerificationNotice } from './components/EmailVerificationNotice';
 import { UserProfileModal } from './components/UserProfileModal';
-import { Pagination } from './components/Pagination';
 import { loggingService } from './services/loggingService';
-
-const EVENTS_PER_PAGE = 8;
 
 const App: React.FC = () => {
   // Data state
@@ -48,8 +45,7 @@ const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [unverifiedEmail, setUnverifiedEmail] = useState<string | null>(null);
 
-  // Filtering and Pagination State
-  const [currentPage, setCurrentPage] = useState(1);
+  // Filtering State
   const [filters, setFilters] = useState({
     query: '',
     month: '',
@@ -58,12 +54,10 @@ const App: React.FC = () => {
   });
   
   const handleFilterChange = useCallback((type: string, value: string) => {
-    setCurrentPage(1);
     setFilters(prev => ({ ...prev, [type]: value }));
   }, []);
   
   const handleDiscoveryFilter = (type: 'city' | 'category', id: string) => {
-      setCurrentPage(1);
       setFilters(prev => {
           const current = prev[type];
           return { ...prev, [type]: current === id ? null : id };
@@ -132,15 +126,6 @@ const App: React.FC = () => {
     } catch (error) {
        loggingService.logError(error as Error, { context: 'handleSignUp' });
        throw error;
-    }
-  };
-  
-  const handleForgotPassword = async (email: string) => {
-    try {
-        await api.forgotPassword(email);
-    } catch (error) {
-        loggingService.logError(error as Error, { context: 'handleForgotPassword' });
-        throw error;
     }
   };
 
@@ -231,12 +216,6 @@ const App: React.FC = () => {
 
   const featuredEvents = events.filter(e => e.isFeatured);
   
-  // Pagination logic
-  const totalPages = Math.ceil(filteredEvents.length / EVENTS_PER_PAGE);
-  const indexOfLastEvent = currentPage * EVENTS_PER_PAGE;
-  const indexOfFirstEvent = indexOfLastEvent - EVENTS_PER_PAGE;
-  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
-
   if (unverifiedEmail) {
       return <EmailVerificationNotice 
         email={unverifiedEmail} 
@@ -284,15 +263,10 @@ const App: React.FC = () => {
                     currentFilters={filters}
                 />
                 <EventGrid
-                  events={currentEvents}
+                  events={filteredEvents}
                   lang={lang}
                   onSelectEvent={setSelectedEvent}
                   title={lang === 'en' ? 'Upcoming Events' : lang === 'ku' ? 'ڕووداوە چاوەڕوانکراوەکان' : 'الفعاليات القادمة'}
-                />
-                <Pagination 
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
                 />
             </>
         )}
@@ -335,7 +309,7 @@ const App: React.FC = () => {
           onLogin={handleLogin}
           onSignUp={handleSignUp}
           initialMode={authMode}
-          onForgotPassword={handleForgotPassword}
+          onForgotPassword={async (email) => { console.log('Forgot password for', email); }}
           lang={lang}
         />
       )}
